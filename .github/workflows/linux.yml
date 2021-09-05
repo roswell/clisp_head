@@ -44,6 +44,18 @@ jobs:
             suffix: -musl
             cc: 'cc -m32'
           - lisp: sbcl-bin/2.0.0
+            target: x86-64
+            image: 'musl1.2.2-sbcl2.0.5:1'
+            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
+            suffix: -static
+            cc: cc
+          - lisp: sbcl-bin/2.0.0
+            target: x86
+            image: 'i386-musl1.2.2-sbcl2.0.5:1'
+            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
+            suffix: -static
+            cc: 'cc -m32'
+          - lisp: sbcl-bin/2.0.0
             target: x86
             image: 'i386-musl1.1.24-sbcl2.0.5:1'
             suffix: -musl1.1
@@ -83,6 +95,7 @@ jobs:
           IMAGE: ${{ matrix.image }}
           VARIANT: ${{ matrix.suffix }}
           LINKFLAGS: ${{ matrix.linkflags }}
+          CLISP_LDFLAGS: ${{ matrix.clispldflags }}
           CC: ${{ matrix.cc }}
         run: |
           ACTION=checkout-clisp make latest-version docker
