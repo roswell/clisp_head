@@ -17,12 +17,12 @@ jobs:
             target: x86-64
             image: 'glibc2.19-sbcl2.0.0:1'
             suffix: -glibc2.19
-            cc: cc
+            cc: 'cc -std=gnu99'
           - lisp: sbcl-bin/2.0.0
             target: x86
             image: 'glibc2.19-sbcl2.0.0:1'
             suffix: -glibc2.19
-            cc: 'cc -m32'
+            cc: 'cc -m32 -std=gnu99'
           - lisp: sbcl-bin/2.0.0
             target: x86-64
             image: 'glibc2.31-sbcl2.1.4:1'
