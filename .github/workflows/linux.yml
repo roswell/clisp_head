@@ -1,0 +1,100 @@
+name: linux
+
+on:
+  schedule:
+    - cron:  '0 1 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lisp: sbcl-bin/2.0.0
+            target: x86-64
+            image: 'glibc2.19-sbcl2.0.0:1'
+            suffix: -glibc2.19
+            cc: cc
+          - lisp: sbcl-bin/2.0.0
+            target: x86
+            image: 'glibc2.19-sbcl2.0.0:1'
+            suffix: -glibc2.19
+            cc: 'cc -m32'
+          - lisp: sbcl-bin/2.0.0
+            target: x86-64
+            image: 'glibc2.31-sbcl2.1.4:1'
+            suffix: -glibc2.31
+            cc: cc
+          - lisp: sbcl-bin/2.0.0
+            target: x86
+            image: 'glibc2.31-sbcl2.1.4:1'
+            suffix: -glibc2.31
+            cc: 'cc -m32'
+          - lisp: sbcl-bin/2.0.0
+            target: x86-64
+            image: 'musl1.2.2-sbcl2.0.5:1'
+            suffix: -musl
+            cc: cc
+          - lisp: sbcl-bin/2.0.0
+            target: x86
+            image: 'i386-musl1.2.2-sbcl2.0.5:1'
+            suffix: -musl
+            cc: 'cc -m32'
+          - lisp: sbcl-bin/2.0.0
+            target: x86
+            image: 'i386-musl1.1.24-sbcl2.0.5:1'
+            suffix: -musl1.1
+            cc: cc
+
+    environment: SET_VERSION
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setenv
+        run: |
+          echo "$HOME/.roswell/bin" >> $GITHUB_PATH
+          echo "ROSWELL_BRANCH=release" >> $GITHUB_ENV
+      - name: checkenv
+        run: |
+          uname -s
+          uname -m
+          echo $ROSWELL_INSTALL_DIR
+          echo $ROSWELL_BRANCH
+      - name: Install Roswell
+        env:
+          LISP: ${{ matrix.lisp }}
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ matrix.image }}
+        run: |
+          curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
+          ros install snmsts/sn.github roswell/sbcl_bin
+          docker login docker.pkg.github.com -u snmsts -p $GITHUB_OAUTH_TOKEN;
+          curl -L -O https://raw.githubusercontent.com/roswell/clisp_bin/main/Makefile
+          make pull-docker
+      - name: build
+        env:
+          VERSION: ${{ secrets.VERSION }}
+          CPU: ${{ matrix.target }}
+          OS: linux
+          IMAGE: ${{ matrix.image }}
+          VARIANT: ${{ matrix.suffix }}
+          LINKFLAGS: ${{ matrix.linkflags }}
+          CC: ${{ matrix.cc }}
+        run: |
+          ACTION=checkout-clisp make latest-version docker
+          sudo rm -f clisp/version.sh
+          ACTION=clisp/version.sh make latest-version docker
+          ACTION=compile make latest-version docker
+          ACTION=archive make latest-version docker
+      - name: upload
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ secrets.VERSION }}
+          CPU: ${{ matrix.target }}
+          VARIANT: ${{ matrix.suffix }}
+        run: |
+          env FILE=`ls *.bz2` make latest-version upload-archive;
