@@ -42,7 +42,8 @@ jobs:
         run: |
           make latest-version checkout-clisp
           rm -f clisp/version.sh
-          make latest-version clisp/version.sh compile archive
+          make latest-version clisp/version.sh compile
+          make latest-version archive
       - name: upload
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
