@@ -98,7 +98,7 @@ jobs:
           CLISP_LDFLAGS: ${{ matrix.clispldflags }}
           CC: ${{ matrix.cc }}
         run: |
-          ACTION=checkout-clisp make latest-version docker
+          make latest-version clisp
           sudo rm -f clisp/version.sh
           ACTION=clisp/version.sh make latest-version docker
           ACTION=compile make latest-version docker
