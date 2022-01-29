@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARCH: ${{ matrix.target }}
-          TSV_FILE=clisp-head.tsv
+          TSV_FILE: clisp-head.tsv
         run: |
           make tsv
           make upload-tsv
