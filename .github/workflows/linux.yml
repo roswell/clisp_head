@@ -8,55 +8,55 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - lisp: sbcl-bin/2.0.0
-            target: x86-64
+          - target: x86-64
+            lisp: 'sbcl-bin/2.0.0'
             image: 'glibc2.19-sbcl2.0.0:1'
             suffix: -glibc2.19
             cc: 'cc -std=gnu99'
-          - lisp: sbcl-bin/2.0.0
-            target: x86
+          - target: x86
+            lisp: sbcl-bin/2.0.0
             image: 'glibc2.19-sbcl2.0.0:1'
             suffix: -glibc2.19
             cc: 'cc -m32 -std=gnu99'
-          - lisp: sbcl-bin/2.0.0
-            target: x86-64
+          - target: x86-64
+            lisp: sbcl-bin/2.0.0
             image: 'glibc2.31-sbcl2.1.4:1'
             suffix: -glibc2.31
             cc: cc
-          - lisp: sbcl-bin/2.0.0
-            target: x86
+          - target: x86
+            lisp: sbcl-bin/2.0.0
             image: 'glibc2.31-sbcl2.1.4:1'
             suffix: -glibc2.31
             cc: 'cc -m32'
-          - lisp: sbcl-bin/2.0.0
-            target: x86-64
+          - target: x86-64
+            lisp: sbcl-bin/2.0.0
             image: 'musl1.2.2-sbcl2.0.5:1'
             suffix: -musl
             cc: cc
-          - lisp: sbcl-bin/2.0.0
-            target: x86
+          - target: x86
+            lisp: sbcl-bin/2.0.0
             image: 'i386-musl1.2.2-sbcl2.0.5:1'
             suffix: -musl
             cc: 'cc -m32'
-          - lisp: sbcl-bin/2.0.0
-            target: x86-64
+          - target: x86-64
+            lisp: sbcl-bin/2.0.0
             image: 'musl1.2.2-sbcl2.0.5:1'
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
             suffix: -static
             cc: cc
-          - lisp: sbcl-bin/2.0.0
-            target: x86
+          - target: x86
+            lisp: sbcl-bin/2.0.0
             image: 'i386-musl1.2.2-sbcl2.0.5:1'
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
             suffix: -static
             cc: 'cc -m32'
-          - lisp: sbcl-bin/2.0.0
-            target: x86
+          - target: x86
+            lisp: sbcl-bin/2.0.0
             image: 'i386-musl1.1.24-sbcl2.0.5:1'
             suffix: -musl1.1
             cc: cc
@@ -64,8 +64,11 @@ jobs:
     environment: SET_VERSION
 
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH
@@ -79,13 +82,23 @@ jobs:
       - name: Install Roswell
         env:
           LISP: ${{ matrix.lisp }}
-          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE: ${{ matrix.image }}
         run: |
           curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
           ros install snmsts/sn.github roswell/sbcl_bin
-          docker login docker.pkg.github.com -u snmsts -p $GITHUB_OAUTH_TOKEN;
-          make pull-docker
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: pull docker image
+        env:
+          DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          IMAGE: ${{ matrix.image }}
+        run: |
+          if [ -n "$IMAGE" ]; then
+             make pull-docker
+          fi
       - name: build
         env:
           VERSION: ${{ secrets.VERSION }}
