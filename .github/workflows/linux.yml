@@ -13,52 +13,52 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86-64
+          - suffix: -glibc2.19
+            target: x86-64
+            image: 'glibc2.19-sbcl2.0.0:1'
             lisp: 'sbcl-bin/2.0.0'
-            image: 'glibc2.19-sbcl2.0.0:1'
-            suffix: -glibc2.19
             cc: 'cc -std=gnu99'
-          - target: x86
-            lisp: sbcl-bin/2.0.0
+          - suffix: -glibc2.19
+            target: x86
             image: 'glibc2.19-sbcl2.0.0:1'
-            suffix: -glibc2.19
+            lisp: sbcl-bin/2.0.0
             cc: 'cc -m32 -std=gnu99'
-          - target: x86-64
-            lisp: sbcl-bin/2.0.0
+          - suffix: -glibc2.31
+            target: x86-64
             image: 'glibc2.31-sbcl2.1.4:1'
-            suffix: -glibc2.31
+            lisp: sbcl-bin/2.0.0
             cc: cc
-          - target: x86
-            lisp: sbcl-bin/2.0.0
+          - suffix: -glibc2.31
+            target: x86
             image: 'glibc2.31-sbcl2.1.4:1'
-            suffix: -glibc2.31
-            cc: 'cc -m32'
-          - target: x86-64
             lisp: sbcl-bin/2.0.0
+            cc: 'cc -m32'
+          - suffix: -musl
+            target: x86-64
             image: 'musl1.2.2-sbcl2.0.5:1'
-            suffix: -musl
+            lisp: sbcl-bin/2.0.0
             cc: cc
-          - target: x86
-            lisp: sbcl-bin/2.0.0
+          - suffix: -musl
+            target: x86
             image: 'i386-musl1.2.2-sbcl2.0.5:1'
-            suffix: -musl
-            cc: 'cc -m32'
-          - target: x86-64
             lisp: sbcl-bin/2.0.0
+            cc: 'cc -m32'
+          - suffix: -static
+            target: x86-64
             image: 'musl1.2.2-sbcl2.0.5:1'
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            suffix: -static
-            cc: cc
-          - target: x86
             lisp: sbcl-bin/2.0.0
+            cc: cc
+          - suffix: -static
+            target: x86
             image: 'i386-musl1.2.2-sbcl2.0.5:1'
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            suffix: -static
-            cc: 'cc -m32'
-          - target: x86
             lisp: sbcl-bin/2.0.0
+            cc: 'cc -m32'
+          - suffix: -musl1.1
+            target: x86
             image: 'i386-musl1.1.24-sbcl2.0.5:1'
-            suffix: -musl1.1
+            lisp: sbcl-bin/2.0.0
             cc: cc
 
     environment: SET_VERSION
@@ -85,6 +85,7 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
           ros install snmsts/sn.github roswell/sbcl_bin
+          cp -r ~/.roswell/local-projects/roswell/sbcl_bin/tools-for-build/ .
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
