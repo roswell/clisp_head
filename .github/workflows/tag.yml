@@ -13,7 +13,7 @@ jobs:
         lisp: [sbcl-bin/2.0.0]
     environment: SET_VERSION
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH
