@@ -17,13 +17,12 @@ VARIANT ?=
 CLISP_LDFLAGS ?=
 DOCKER_REPO ?= docker.pkg.github.com/roswell/sbcl_bin
 PACK=clisp-$(VERSION)-$(CPU)-$(OS)$(VARIANT)
-LAST_VERSION=`ros web.ros version`
-
+LAST_VERSION=$(shell ros web.ros version)
 hash:
 	git ls-remote --heads $(ORIGIN_URI) $(ORIGIN_REF) |sed -E "s/^([0-9a-fA-F]*).*/\1/" > hash
 
 lasthash: web.ros
-	curl -sfSL -o lasthash $(GITHUB)/releases/download/$(LAST_VERSION)/hash
+	curl -sfSL -o lasthash $(GITHUB)/releases/download/files/hash || touch lasthash
 
 latest-version: lasthash version
 	$(eval VERSION := $(shell cat version))
@@ -34,7 +33,8 @@ download: lasthash libsigsegv-$(SIGSEGV_VERSION).tar.gz libffcall-$(FFCALL_VERSI
 
 upload-hash: hash web.ros
 	($(MAKE) lasthash  && diff -u hash lasthash) || \
-	VERSION=$(VERSION) ros web.ros upload-hash
+	( VERSION=$(VERSION) ros web.ros upload-hash; \
+	  VERSION=files ros web.ros upload-hash)
 
 tsv: web.ros
 	TSV_FILE=$(TSV_FILE) ros web.ros tsv
