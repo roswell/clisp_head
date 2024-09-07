@@ -85,7 +85,6 @@ jobs:
           curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
           ros install snmsts/sn.github roswell/sbcl_bin
           docker login docker.pkg.github.com -u snmsts -p $GITHUB_OAUTH_TOKEN;
-          curl -L -O https://raw.githubusercontent.com/roswell/clisp_bin/main/Makefile
           make pull-docker
       - name: build
         env:
