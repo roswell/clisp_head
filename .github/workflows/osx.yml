@@ -8,16 +8,16 @@ on:
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: ${{ matrix.target == 'arm64' && 'macos-14' || 'macOS-12' }}
     strategy:
       fail-fast: false
       matrix:
         lisp: [sbcl-bin/2.0.0]
-        target: [x86-64]
+        target: [arm64, x86-64]
     environment: SET_VERSION
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: setenv
         run: |
@@ -38,6 +38,9 @@ jobs:
           OS: darwin
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARCH: ${{ matrix.target }}
+          CFLAGS: -mmacosx-version-min=10.9
+          CXXFLAGS: -mmacosx-version-min=10.9
+          LDFLAGS: -mmacosx-version-min=10.9
         run: |
           make latest-version clisp
           rm -f clisp/version.sh
