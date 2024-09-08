@@ -42,7 +42,10 @@ tsv: web.ros
 	TSV_FILE=$(TSV_FILE) ros web.ros tsv
 
 upload-tsv: web.ros
-	TSV_FILE=$(TSV_FILE) ros web.ros upload-tsv
+	TSV_FILE=$(TSV_FILE) VERSION=$(VERSION) ros web.ros upload-tsv
+
+download-tsv:
+	TSV_FILE=$(TSV_FILE) VERSION=$(VERSION) ros web.ros get-tsv
 
 version: web.ros
 	@echo $(LAST_VERSION) > version
