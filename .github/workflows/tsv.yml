@@ -37,7 +37,7 @@ jobs:
           TSV_FILE: clisp_head.tsv
         run: |
           make tsv
-          make upload-tsv
+          VERSION=files make upload-tsv
           cat $TSV_FILE
           make table
           git config user.name "$(git --no-pager log --format=format:'%an' -n 1)"
