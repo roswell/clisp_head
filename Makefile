@@ -16,6 +16,8 @@ CPU ?= $(shell ros roswell-internal-use uname -m)
 VARIANT ?=
 CLISP_LDFLAGS ?=
 DOCKER_REPO ?= docker.pkg.github.com/roswell/sbcl_bin
+DOCKER_PLATFORM ?= linux/amd64
+
 PACK=clisp-$(VERSION)-$(CPU)-$(OS)$(VARIANT)
 LAST_VERSION=$(shell ros web.ros version)
 hash:
@@ -46,7 +48,7 @@ version: web.ros
 	@echo $(LAST_VERSION) > version
 
 web.ros:
-	curl -L -O https://raw.githubusercontent.com/roswell/sbcl_head/master/web.ros
+	curl -L -O https://raw.githubusercontent.com/roswell/sbcl_bin/master/web.ros
 
 show:
 	@echo PACK=$(PACK) CC=$(CC)
@@ -67,9 +69,15 @@ ffcall: libffcall-$(FFCALL_VERSION).tar.gz
 	cd libffcall-$(FFCALL_VERSION);CC='$(CC)' ./configure --prefix=`pwd`/../ffcall --disable-shared;make;make check;make install
 	rm -rf libffcall-$(FFCALL_VERSION)
 
-clisp: download
+clisp: download lasthash
 	git clone --depth 100 $(ORIGIN_URI) || true
 	cd clisp;git checkout `cat ../lasthash`
+	echo mkdir clisp;
+	cd clisp; \
+	git init; \
+	git remote add origin $(ORIGIN_URI); \
+	git fetch --depth=1 origin $(shell cat lasthash); \
+	git reset --hard FETCH_HEAD
 
 clisp/version.sh: clisp
 	echo VERSION_NUMBER=$(VERSION) > clisp/version.sh
@@ -121,3 +129,6 @@ clean:
 	rm -rf $(PACK)
 	rm -f hash lasthash version
 	#rm -f clisp*.tar.bz2
+
+table:
+	ros web.ros table

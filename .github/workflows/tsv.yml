@@ -13,8 +13,10 @@ jobs:
         lisp: [sbcl-bin/2.0.0]
         target: [x86-64]
     environment: SET_VERSION
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH
@@ -27,6 +29,7 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
           ros install snmsts/sn.github roswell/sbcl_bin
+
       - name: build & upload
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,3 +38,8 @@ jobs:
         run: |
           make tsv
           make upload-tsv
+          cat $TSV_FILE
+          make table
+          git config user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+          git config user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+          (git add table.md && git commit -m "[ci skip] table update" && git push) || true
