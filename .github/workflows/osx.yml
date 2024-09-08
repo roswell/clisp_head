@@ -43,9 +43,11 @@ jobs:
           LDFLAGS: -mmacosx-version-min=10.9
         run: |
           make latest-version clisp
+          cat clisp/version.sh
           rm -f clisp/version.sh
-          make latest-version clisp/version.sh compile
-          make latest-version archive
+          make latest-version clisp/version.sh
+          cat clisp/version.sh
+          make latest-version compile archive
       - name: upload
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
