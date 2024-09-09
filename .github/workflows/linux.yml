@@ -35,6 +35,7 @@ jobs:
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
           - comment: "no suffix glibc2.31 riscv64"
+            target: riscv64
             lisp: 'sbcl-bin/2.0.0'
             image: 'glibc2.31'
             docker-platform: 'linux/riscv64'
