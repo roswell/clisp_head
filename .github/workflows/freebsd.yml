@@ -13,7 +13,7 @@ jobs:
       VERSION: ${{ secrets.VERSION }}
       CPU: ${{ matrix.target }}
       OS: freebsd
-      SUFFIX: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
+      VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
       LINKFLAGS: ${{ matrix.linkflags }}
       CLISP_LDFLAGS: ${{ matrix.clispldflags }}
       CC: ${{ matrix.target == 'x86' && 'cc -m32' || 'cc' }}
@@ -49,7 +49,7 @@ jobs:
       - name: Test on FreeBSD
         uses: cross-platform-actions/action@v0.25.0
         with:
-          environment_variables: VERSION ARCH IMAGE SUFFIX LINKFLAGS GH_USER GH_REPO GITHUB_OAUTH_TOKEN
+          environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
           operating_system: freebsd
           architecture: ${{ matrix.target == 'x86' && 'x86-64' || matrix.target }}
           version: ${{ matrix.release }}
