@@ -90,7 +90,8 @@ clisp/version.sh: clisp
 		autoconf; \
 		autoheader
 
-compile: show sigsegv ffcall clisp/version.sh
+compile: show sigsegv ffcall clisp
+	rm -f clisp/version.sh; $(MAKE) clisp/version.sh
 	cd clisp; \
 	CC='$(CC)' \
 	LDFLAGS='$(CLISP_LDFLAGS)' \
