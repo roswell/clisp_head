@@ -78,6 +78,7 @@ jobs:
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32'
             image: 'musl1.2.2'
+            docker-platform: 'linux/386'
             docker-build-options: '--build-arg WRAPPER=linux32'
             docker-image-suffix: 'x86'
           - suffix: -static
@@ -86,12 +87,14 @@ jobs:
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32'
             image: 'musl1.2.2'
+            docker-platform: 'linux/386'
             docker-build-options: '--build-arg WRAPPER=linux32'
             docker-image-suffix: 'x86'
           - suffix: -musl1.1
             target: x86
             lisp: sbcl-bin/2.0.0
             cc: cc
+            image: 'musl1.1.24'
             docker-platform: 'linux/386'
             docker-build-options: '--build-arg WRAPPER=linux32'
             docker-image-suffix: 'x86'
