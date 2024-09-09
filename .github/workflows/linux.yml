@@ -134,6 +134,28 @@ jobs:
             image: 'musl1.2.2'
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
+          # with suffix arm64
+          - suffix: -glibc2.31
+            target: riscv64
+            lisp: 'sbcl-bin/2.0.0'
+            image: 'glibc2.31'
+            docker-platform: 'linux/riscv64'
+            docker-image-suffix: 'riscv64'
+          - suffix: -musl
+            target: riscv64
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.5'
+            docker-platform: 'linux/riscv64'
+            docker-image-suffix: 'riscv64'
+          - suffix: -static
+            target: riscv64
+            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.5'
+            docker-platform: 'linux/riscv64'
+            docker-image-suffix: 'riscv64'
 
     environment: SET_VERSION
 
