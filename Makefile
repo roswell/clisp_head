@@ -33,7 +33,7 @@ latest-version: lasthash version
 
 download: lasthash libsigsegv-$(SIGSEGV_VERSION).tar.gz libffcall-$(FFCALL_VERSION).tar.gz
 
-upload-hash: hash web.ros
+tag: hash web.ros
 	($(MAKE) lasthash  && diff -u hash lasthash) || \
 	( VERSION=$(VERSION) ros web.ros upload-hash; \
 	  VERSION=files ros web.ros upload-hash)
