@@ -13,7 +13,7 @@ jobs:
       VERSION: ${{ secrets.VERSION }}
       CPU: ${{ matrix.target }}
       OS: freebsd
-      VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
+      SUFFIX: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
       LINKFLAGS: ${{ matrix.linkflags }}
       CLISP_LDFLAGS: ${{ matrix.clispldflags }}
       CC: ${{ matrix.target == 'x86' && 'cc -m32' || 'cc' }}
