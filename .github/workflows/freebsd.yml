@@ -46,7 +46,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Test on FreeBSD
+      - if: ${{ matrix.target != 'x86' }}
+        name: Test on FreeBSD
         uses: cross-platform-actions/action@v0.25.0
         with:
           environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
@@ -63,5 +64,20 @@ jobs:
             sudo pkg install -y bash roswell autoconf texinfo perl5 gmake gcc libffi git
             ros install ${{ matrix.lisp }}
             ros install snmsts/sn.github roswell/sbcl_bin
+            gmake latest-version compile archive;
+            env FILE=`ls *.bz2` gmake latest-version upload-archive;
+      - if: ${{ matrix.target == 'x86' }}
+        name: Test on FreeBSD
+        id: test
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: ${{ matrix.release }}
+          envs: 'VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN'
+          usesh: true
+          prepare: |
+            pkg install -y bash roswell autoconf texinfo perl5 gmake gcc libffi git
+            ros install ${{ matrix.lisp }}
+            ros install snmsts/sn.github roswell/sbcl_bin
+          run: |
             gmake latest-version compile archive;
             env FILE=`ls *.bz2` gmake latest-version upload-archive;
