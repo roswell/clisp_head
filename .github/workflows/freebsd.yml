@@ -63,8 +63,5 @@ jobs:
             sudo pkg install -y bash roswell autoconf texinfo perl5 gmake gcc libffi git
             ros install ${{ matrix.lisp }}
             ros install snmsts/sn.github
-            if [ "$VERSION" = "" ]; then
-              sudo -E gmake latest-version compile archive upload-archive;
-            else
-              sudo -E gmake compile archive upload-archive;
-            fi
+            gmake latest-version compile archive;
+            env FILE=`ls *.bz2` gmake latest-version upload-archive;
