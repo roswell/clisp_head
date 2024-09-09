@@ -49,12 +49,13 @@ jobs:
       - name: Test on FreeBSD
         uses: cross-platform-actions/action@v0.25.0
         with:
-          environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
+          environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO
           operating_system: freebsd
           architecture: ${{ matrix.target == 'x86' && 'x86-64' || matrix.target }}
           version: ${{ matrix.release }}
           shell: bash
           run: |
+            env
             uname -a
             freebsd-version
             whoami
