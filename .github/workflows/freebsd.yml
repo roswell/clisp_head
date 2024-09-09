@@ -62,6 +62,6 @@ jobs:
             sudo env IGNORE_OSVERSION=yes pkg update -f
             sudo pkg install -y bash roswell autoconf texinfo perl5 gmake gcc libffi git
             ros install ${{ matrix.lisp }}
-            ros install snmsts/sn.github
+            ros install snmsts/sn.github roswell/sbcl_bin
             gmake latest-version compile archive;
             env FILE=`ls *.bz2` gmake latest-version upload-archive;
