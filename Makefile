@@ -15,7 +15,7 @@ OS ?= $(shell ros roswell-internal-use uname)
 CPU ?= $(shell ros roswell-internal-use uname -m)
 VARIANT ?=
 CLISP_LDFLAGS ?=
-DOCKER_REPO ?= docker.pkg.github.com/roswell/sbcl_bin
+DOCKER_REPO ?= docker.pkg.github.com/roswell/clisp_bin
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_ACTION ?= docker-default-action
 
@@ -110,6 +110,15 @@ archive: show
 upload-archive: show
 	VERSION=$(VERSION) TARGET=$(ARCH) SUFFIX=$(SUFFIX) ros web.ros upload-archive
 
+debug-docker:
+	docker run \
+		--rm \
+		-it \
+		--platform $(DOCKER_PLATFORM) \
+		-v `pwd`:/tmp \
+		$(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
+		bash
+
 build-docker:
 	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) $(DOCKER_BUILD_OPTIONS) ./tools-for-build/$(IMAGE)
 push-docker:
@@ -135,7 +144,7 @@ docker:
 		-e LINKFLAGS=$(LINKFLAGS) \
 		$(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
 		bash \
-		-c "cd /tmp;make $(DOCKER_ACTION)"
+		-c "cd /tmp;bash ./tools-for-build/$(IMAGE)/setup;make $(DOCKER_ACTION)"
 
 docker-default-action: compile archive
 
