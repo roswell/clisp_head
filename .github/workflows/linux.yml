@@ -15,62 +15,86 @@ jobs:
         include:
           - nosuffix: "no suffix"
             target: x86-64
-            image: 'glibc2.19-sbcl2.0.0:1'
             lisp: 'sbcl-bin/2.0.0'
             cc: 'cc -std=gnu99'
+            image: 'glibc2.19'
+            docker-platform: 'linux/amd64'
+            docker-image-suffix: ''
           - nosuffix: "no suffix"
             target: x86
-            image: 'glibc2.19-sbcl2.0.0:1'
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32 -std=gnu99'
-          # with suffix below.
-          - suffix: -glibc2.19
-            target: x86-64
-            image: 'glibc2.19-sbcl2.0.0:1'
+            image: 'glibc2.19'
+            docker-platform: 'linux/amd64'
+            docker-image-suffix: ''
+          - nosuffix: "no suffix"
+            target: arm64
             lisp: 'sbcl-bin/2.0.0'
             cc: 'cc -std=gnu99'
+            image: 'glibc2.19'
+            docker-platform: 'linux/arm64'
+            docker-image-suffix: 'aarch64'
+          # with suffix below. x86-64
+          - suffix: -glibc2.31
+            target: x86-64
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'glibc2.31'
+            docker-platform: 'linux/amd64'
+          - suffix: -glibc2.19
+            target: x86-64
+            lisp: 'sbcl-bin/2.0.0'
+            cc: 'cc -std=gnu99'
+            image: 'glibc2.19'
+            docker-platform: 'linux/amd64'
+          - suffix: -musl
+            target: x86-64
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.2'
+            docker-platform: 'linux/amd64'
+          - suffix: -static
+            target: x86-64
+            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.2'
+            docker-platform: 'linux/amd64'
+          # with suffix x86
+          - suffix: -glibc2.31
+            target: x86
+            lisp: sbcl-bin/2.0.0
+            cc: 'cc -m32'
+            image: 'glibc2.31'
+            docker-platform: 'linux/amd64'
           - suffix: -glibc2.19
             target: x86
-            image: 'glibc2.19-sbcl2.0.0:1'
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32 -std=gnu99'
-          - suffix: -glibc2.31
-            target: x86-64
-            image: 'glibc2.31-sbcl2.1.4:1'
-            lisp: sbcl-bin/2.0.0
-            cc: cc
-          - suffix: -glibc2.31
-            target: x86
-            image: 'glibc2.31-sbcl2.1.4:1'
-            lisp: sbcl-bin/2.0.0
-            cc: 'cc -m32'
-          - suffix: -musl
-            target: x86-64
-            image: 'musl1.2.2-sbcl2.0.5:1'
-            lisp: sbcl-bin/2.0.0
-            cc: cc
+            image: 'glibc2.19'
+            docker-platform: 'linux/amd64'
           - suffix: -musl
             target: x86
-            image: 'i386-musl1.2.2-sbcl2.0.5:1'
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32'
-          - suffix: -static
-            target: x86-64
-            image: 'musl1.2.2-sbcl2.0.5:1'
-            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
-            cc: cc
+            image: 'musl1.2.2'
+            docker-build-options: '--build-arg WRAPPER=linux32'
+            docker-image-suffix: 'x86'
           - suffix: -static
             target: x86
-            image: 'i386-musl1.2.2-sbcl2.0.5:1'
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
             lisp: sbcl-bin/2.0.0
             cc: 'cc -m32'
+            image: 'musl1.2.2'
+            docker-build-options: '--build-arg WRAPPER=linux32'
+            docker-image-suffix: 'x86'
           - suffix: -musl1.1
             target: x86
-            image: 'i386-musl1.1.24-sbcl2.0.5:1'
             lisp: sbcl-bin/2.0.0
             cc: cc
+            docker-platform: 'linux/386'
+            docker-build-options: '--build-arg WRAPPER=linux32'
+            docker-image-suffix: 'x86'
 
     environment: SET_VERSION
 
@@ -106,10 +130,12 @@ jobs:
       - name: pull docker image
         env:
           DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          DOCKER_BUILD_OPTIONS: ${{ matrix.docker-build-options }}
+          DOCKER_IMAGE_SUFFIX: ${{ matrix.docker-image-suffix }}
           IMAGE: ${{ matrix.image }}
         run: |
           if [ -n "$IMAGE" ]; then
-             make pull-docker
+             make pull-docker || make build-docker push-docker
           fi
       - name: build
         env:
@@ -121,12 +147,12 @@ jobs:
           LINKFLAGS: ${{ matrix.linkflags }}
           CLISP_LDFLAGS: ${{ matrix.clispldflags }}
           CC: ${{ matrix.cc }}
+          DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          DOCKER_IMAGE_SUFFIX: ${{ matrix.docker-image-suffix }}
         run: |
           make latest-version clisp
           sudo rm -f clisp/version.sh
-          ACTION=clisp/version.sh make latest-version docker
-          ACTION=compile make latest-version docker
-          ACTION=archive make latest-version docker
+          make latest-version docker
       - name: upload
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

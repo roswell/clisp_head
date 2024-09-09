@@ -17,6 +17,7 @@ VARIANT ?=
 CLISP_LDFLAGS ?=
 DOCKER_REPO ?= docker.pkg.github.com/roswell/sbcl_bin
 DOCKER_PLATFORM ?= linux/amd64
+DOCKER_ACTION ?= docker-default-action
 
 PACK=clisp-$(VERSION)-$(CPU)-$(OS)$(VARIANT)
 LAST_VERSION=$(shell ros web.ros version)
@@ -89,7 +90,7 @@ clisp/version.sh: clisp
 		autoconf; \
 		autoheader
 
-compile: show sigsegv ffcall
+compile: show sigsegv ffcall clisp/version.sh
 	cd clisp; \
 	CC='$(CC)' \
 	LDFLAGS='$(CLISP_LDFLAGS)' \
@@ -108,11 +109,20 @@ archive: show
 upload-archive: show
 	VERSION=$(VERSION) TARGET=$(ARCH) SUFFIX=$(SUFFIX) ros web.ros upload-archive
 
+build-docker:
+	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) $(DOCKER_BUILD_OPTIONS) ./tools-for-build/$(IMAGE)
+push-docker:
+	docker push $(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX);
 pull-docker:
+	docker pull $(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX);
+
+pull-docker-old:
 	docker pull $(DOCKER_REPO)/$(IMAGE);
 
 docker:
 	docker run \
+		--rm \
+		--platform $(DOCKER_PLATFORM) \
 		-v `pwd`:/tmp \
 		-e VERSION=$(VERSION) \
 		-e CPU=$(CPU) \
@@ -122,9 +132,11 @@ docker:
 		-e VARIANT=$(VARIANT) \
 		-e CFLAGS=$(CFLAGS) \
 		-e LINKFLAGS=$(LINKFLAGS) \
-		$(DOCKER_REPO)/$(IMAGE) \
+		$(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
 		bash \
-		-c "cd /tmp;make $(ACTION)"
+		-c "cd /tmp;make $(DOCKER_ACTION)"
+
+docker-default-action: compile archive
 
 clean:
 	rm -rf sigsegv ffcall clisp
