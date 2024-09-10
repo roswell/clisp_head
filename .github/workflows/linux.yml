@@ -148,7 +148,7 @@ jobs:
             image: 'musl1.2.2'
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
-          # with suffix arm64
+          # with suffix riscv64
           - suffix: -glibc2.31
             target: riscv64
             lisp: 'sbcl-bin/2.0.0'
@@ -199,6 +199,35 @@ jobs:
             image: 'musl1.2.5'
             docker-platform: 'linux/ppc64le'
             docker-image-suffix: 'ppc64le'
+          #with suffix below. armhf
+          - suffix: -glibc2.19
+            target: armhf
+            lisp: 'sbcl-bin/2.0.0'
+            cc: 'cc -std=gnu99'
+            image: 'glibc2.19'
+            docker-platform: 'linux/arm/v7'
+            docker-image-suffix: 'armv7'
+          - suffix: -glibc2.31
+            target: armhf
+            lisp: 'sbcl-bin/2.0.0'
+            image: 'glibc2.31'
+            docker-platform: 'linux/arm/v7'
+            docker-image-suffix: 'armv7'
+          - suffix: -musl
+            target: armhf
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.5'
+            docker-platform: 'linux/arm/v7'
+            docker-image-suffix: 'armv7'
+          - suffix: -static
+            target: armhf
+            clispldflags: '--static -static-libgcc -static-libstdc++ -static'
+            lisp: sbcl-bin/2.0.0
+            cc: cc
+            image: 'musl1.2.5'
+            docker-platform: 'linux/arm/v7'
+            docker-image-suffix: 'armv7'
 
     environment: SET_VERSION
 
