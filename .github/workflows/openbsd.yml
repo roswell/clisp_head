@@ -60,7 +60,7 @@ jobs:
         run: make latest-version upload-archive-p
         continue-on-error: true
       - name: Test on OpenBSD
-        if: steps.check_uploaded.outcome == 'failure'
+        if: ${{ matrix.target == 'arm64' && steps.check_uploaded.outcome == 'failure' }}
         uses: cross-platform-actions/action@v0.25.0
         with:
           environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
@@ -74,8 +74,25 @@ jobs:
             pwd
             sudo touch /usr/bin/ros
             sudo chmod 755 /usr/bin/ros
-            sudo pkg_add gmake git sbcl automake-1.16.5 autoconf-2.71 curl
+            sudo pkg_add gmake git sbcl automake-1.16.5 autoconf-2.71 curl bzip2
             AUTOCONF_VERSION=2.71 gmake latest-version compile archive;
+      - name: Test on OpenBSD
+        if: ${{ matrix.target == 'x86-64' && steps.check_uploaded.outcome == 'failure' }}
+        id: test
+        uses: vmactions/openbsd-vm@v1
+        with:
+          release: ${{ matrix.release }}
+          envs: 'VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN'
+          usesh: true
+          prepare: |
+            touch /usr/bin/ros
+            chmod 755 /usr/bin/ros
+            pkg_add gmake git sbcl automake-1.16.5 autoconf-2.71 curl bzip2
+          run: |
+            uname -a
+            whoami
+            pwd
+            AUTOCONF_VERSION=2.71 gmake latest-version compile archive
       - name: upload
         if: steps.check_uploaded.outcome == 'failure'
         env:
