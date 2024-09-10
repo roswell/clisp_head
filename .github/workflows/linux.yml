@@ -47,6 +47,13 @@ jobs:
             image: 'glibc2.19'
             docker-platform: 'linux/ppc64le'
             docker-image-suffix: 'ppc64le'
+          - comment: "no suffix glibc2.19 armv7"
+            target: armhf
+            lisp: 'sbcl-bin/2.0.0'
+            cc: 'cc -std=gnu99'
+            image: 'glibc2.19'
+            docker-platform: 'linux/arm/v7'
+            docker-image-suffix: 'armv7'
            #with suffix below. x86-64
           - suffix: -glibc2.31
             target: x86-64
