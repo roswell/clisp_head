@@ -12,7 +12,7 @@ jobs:
     env:
       VERSION: ${{ secrets.VERSION }}
       CPU: ${{ matrix.target }}
-      OS: freebsd
+      OS: ${{ matrix.os }}
       VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
       LINKFLAGS: ${{ matrix.linkflags }}
       CLISP_LDFLAGS: ${{ matrix.clispldflags }}
@@ -28,6 +28,7 @@ jobs:
         release: ['7.5']
         target: [x86-64, arm64]
         suffix: [yes]
+        os: [openbsd]
         lisp: [sbcl-bin/2.4.0]
     environment: SET_VERSION
 
@@ -54,7 +55,7 @@ jobs:
         env:
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
-          OS: linux
+          OS: ${{ matrix.os }}
           VARIANT: ${{ matrix.suffix }}
         run: make latest-version upload-archive-p
         continue-on-error: true
@@ -63,7 +64,7 @@ jobs:
         uses: cross-platform-actions/action@v0.25.0
         with:
           environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
-          operating_system: openbsd
+          operating_system: ${{ matrix.os }}
           architecture: ${{ matrix.target }}
           version: ${{ matrix.release }}
           shell: bash
