@@ -79,7 +79,7 @@ jobs:
           environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
           operating_system: ${{ matrix.os }}
           architecture: ${{ matrix.target == 'x86' && 'x86-64' || matrix.target }}
-          version: ${{ matrix.release }}
+          version: freebsd
           shell: bash
           run: |
             uname -a
