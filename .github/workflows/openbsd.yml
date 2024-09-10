@@ -75,7 +75,7 @@ jobs:
             sudo touch /usr/bin/ros
             sudo chmod 755 /usr/bin/ros
             sudo pkg_add gmake git sbcl automake-1.16.5 autoconf-2.71 curl
-            gmake latest-version compile archive;
+            ATUOCONF_VERSION=2.71 gmake latest-version compile archive;
       - name: upload
         if: steps.check_uploaded.outcome == 'failure'
         env:
