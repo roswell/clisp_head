@@ -226,6 +226,11 @@ jobs:
           ros install snmsts/sn.github roswell/sbcl_bin
       - name: check uploaded
         id: check_uploaded
+        env:
+          VERSION: ${{ secrets.VERSION }}
+          CPU: ${{ matrix.target }}
+          OS: linux
+          VARIANT: ${{ matrix.suffix }}
         run: make latest-version upload-archive-p
         continue-on-error: true
       - name: Login to GitHub Container Registry
