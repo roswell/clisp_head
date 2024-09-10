@@ -69,7 +69,7 @@ jobs:
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
           OS: ${{ matrix.os }}
-          VARIANT: ${{ matrix.suffix }}
+          VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
         run: make latest-version upload-archive-p
         continue-on-error: true
       - if: ${{ matrix.target != 'x86' }} && steps.check_uploaded.outcome == 'failure'

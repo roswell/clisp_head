@@ -56,7 +56,7 @@ jobs:
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
           OS: ${{ matrix.os }}
-          VARIANT: ${{ matrix.suffix }}
+          VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
         run: make latest-version upload-archive-p
         continue-on-error: true
       - name: Test on OpenBSD
