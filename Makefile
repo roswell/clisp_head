@@ -102,7 +102,8 @@ compile: show sigsegv ffcall clisp
 		--prefix=`pwd`/../$(PACK)
 	cd clisp/src; \
 	make; \
-	make install
+	make install;
+	make distrib
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
