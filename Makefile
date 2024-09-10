@@ -102,7 +102,7 @@ compile: show sigsegv ffcall clisp
 		--prefix=`pwd`/../$(PACK)
 	cd clisp/src; \
 	make; \
-	make install;
+	make install; \
 	make distrib
 
 archive: show
