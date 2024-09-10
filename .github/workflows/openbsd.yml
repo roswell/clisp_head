@@ -82,7 +82,7 @@ jobs:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
-          VARIANT: ${{ matrix.suffix }}
+          VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
         run: |
           ls
           env FILE=`ls *.bz2` make latest-version upload-archive;
