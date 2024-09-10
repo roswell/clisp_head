@@ -12,7 +12,7 @@ jobs:
     env:
       VERSION: ${{ secrets.VERSION }}
       CPU: ${{ matrix.target }}
-      OS: freebsd
+      OS: ${{ matrix.os }}
       VARIANT: ${{ matrix.suffix == 'yes' && format('-{0}', matrix.release) || ''}}
       LINKFLAGS: ${{ matrix.linkflags }}
       CLISP_LDFLAGS: ${{ matrix.clispldflags }}
@@ -28,6 +28,7 @@ jobs:
         release: ['13.2', '13.3', '14.0', '14.1']
         target: [x86-64, x86, arm64]
         suffix: [yes]
+        os: [freebsd]
         lisp: [sbcl-bin/2.4.8]
         include:
           - release: 13.3
@@ -46,12 +47,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - if: ${{ matrix.target != 'x86' }}
+      - name: setenv
+        run: |
+          echo "$HOME/.roswell/bin" >> $GITHUB_PATH
+          echo "ROSWELL_BRANCH=release" >> $GITHUB_ENV
+      - name: checkenv
+        run: |
+          uname -s
+          uname -m
+          echo $ROSWELL_INSTALL_DIR
+          echo $ROSWELL_BRANCH
+      - name: Install Roswell
+        env:
+          LISP: ${{ matrix.lisp }}
+        run: |
+          curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
+          ros install snmsts/sn.github roswell/sbcl_bin
+      - name: check uploaded
+        id: check_uploaded
+        env:
+          VERSION: ${{ secrets.VERSION }}
+          CPU: ${{ matrix.target }}
+          OS: ${{ matrix.os }}
+          VARIANT: ${{ matrix.suffix }}
+        run: make latest-version upload-archive-p
+        continue-on-error: true
+      - if: ${{ matrix.target != 'x86' }} && steps.check_uploaded.outcome == 'failure'
         name: Test on FreeBSD
         uses: cross-platform-actions/action@v0.25.0
         with:
           environment_variables: VERSION CPU OS VARIANT LINKFLAGS CLISP_LDFLAGS CC GH_USER GH_REPO GITHUB_OAUTH_TOKEN
-          operating_system: freebsd
+          operating_system: ${{ matrix.os }}
           architecture: ${{ matrix.target == 'x86' && 'x86-64' || matrix.target }}
           version: ${{ matrix.release }}
           shell: bash
@@ -66,7 +92,7 @@ jobs:
             ros install snmsts/sn.github roswell/sbcl_bin
             gmake latest-version compile archive;
             env FILE=`ls *.bz2` gmake latest-version upload-archive;
-      - if: ${{ matrix.target == 'x86' }}
+      - if: ${{ matrix.target == 'x86' }} && steps.check_uploaded.outcome == 'failure'
         name: Test on FreeBSD
         id: test
         uses: vmactions/freebsd-vm@v1
