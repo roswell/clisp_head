@@ -224,13 +224,19 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
           ros install snmsts/sn.github roswell/sbcl_bin
+      - name: check uploaded
+        id: check_uploaded
+        run: make latest-version upload-archive-p
+        continue-on-error: true
       - name: Login to GitHub Container Registry
+        if: steps.check_uploaded.outcome == 'failure'
         uses: docker/login-action@v3
         with:
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: pull docker image
+        if: steps.check_uploaded.outcome == 'failure'
         env:
           DOCKER_PLATFORM: ${{ matrix.docker-platform }}
           DOCKER_BUILD_OPTIONS: ${{ matrix.docker-build-options }}
@@ -241,6 +247,7 @@ jobs:
              make pull-docker || make build-docker push-docker
           fi
       - name: build
+        if: steps.check_uploaded.outcome == 'failure'
         env:
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
@@ -255,6 +262,7 @@ jobs:
         run: |
           make latest-version docker
       - name: upload
+        if: steps.check_uploaded.outcome == 'failure'
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ secrets.VERSION }}

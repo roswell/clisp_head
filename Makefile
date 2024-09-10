@@ -107,6 +107,9 @@ compile: show sigsegv ffcall clisp
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
 
+upload-archive-p:
+	curl -I -f https://github.com/roswell/clisp_head/releases/download/$(VERSION)/$(PACK)-binary.tar.bz2 > /dev/null
+
 upload-archive: show
 	VERSION=$(VERSION) TARGET=$(ARCH) SUFFIX=$(SUFFIX) ros web.ros upload-archive
 
@@ -155,5 +158,5 @@ clean:
 	rm -f hash lasthash version
 	#rm -f clisp*.tar.bz2
 
-table:
+table: web.ros
 	ros web.ros table
