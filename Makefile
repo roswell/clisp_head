@@ -7,8 +7,8 @@ ORIGIN_REF=master
 GITHUB=https://github.com/roswell/clisp_head
 TSV_FILE?=clisp-bin_uri.tsv
 
-SIGSEGV_VERSION ?= 2.12
-FFCALL_VERSION ?= 2.4
+SIGSEGV_VERSION ?= 2.14
+FFCALL_VERSION ?= 2.5
 RELEASE_DATE ?= $(shell date +%F)
 
 OS ?= $(shell ros roswell-internal-use uname)
