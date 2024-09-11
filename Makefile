@@ -99,7 +99,7 @@ compile: show sigsegv ffcall clisp
 	./configure \
 		--with-libsigsegv-prefix=`pwd`/../sigsegv \
 		--with-libffcall-prefix=`pwd`/../ffcall \
-		--prefix=`pwd`/../$(PACK)
+		--prefix=$(realpath `pwd`/../$(PACK))
 	cd clisp/src; \
 	make; \
 	make install; \
