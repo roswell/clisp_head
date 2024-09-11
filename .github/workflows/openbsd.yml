@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ['7.5']
+        release: ['6.9', '7.1', '7.2', '7.3', '7.4', '7.5']
         target: [x86-64, arm64]
         suffix: [yes]
         os: [openbsd]
