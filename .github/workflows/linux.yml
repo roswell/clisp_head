@@ -303,4 +303,5 @@ jobs:
           CPU: ${{ matrix.target }}
           VARIANT: ${{ matrix.suffix }}
         run: |
+          ls *.bz2 *.gz
           env FILE=`ls *.bz2` make latest-version upload-archive;

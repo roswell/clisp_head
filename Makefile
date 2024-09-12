@@ -5,7 +5,7 @@ VERSION ?= $(shell date +%y.%-m.%-d)
 ORIGIN_URI=https://github.com/roswell/clisp
 ORIGIN_REF=master
 GITHUB=https://github.com/roswell/clisp_head
-TSV_FILE?=clisp-bin_uri.tsv
+TSV_FILE ?= clisp-bin_uri.tsv
 
 SIGSEGV_VERSION ?= 2.14
 FFCALL_VERSION ?= 2.5
@@ -21,6 +21,7 @@ DOCKER_ACTION ?= docker-default-action
 
 PACK=clisp-$(VERSION)-$(CPU)-$(OS)$(VARIANT)
 LAST_VERSION=$(shell ros web.ros version)
+
 hash:
 	git ls-remote --heads $(ORIGIN_URI) $(ORIGIN_REF) |sed -E "s/^([0-9a-fA-F]*).*/\1/" > hash
 
@@ -37,6 +38,7 @@ download: lasthash libsigsegv-$(SIGSEGV_VERSION).tar.gz libffcall-$(FFCALL_VERSI
 tag: hash web.ros
 	($(MAKE) lasthash  && diff -u hash lasthash) || \
 	( VERSION=$(VERSION) ros web.ros upload-hash; \
+	  VERSION=$(VERSION) ros web.ros upload-hash; \
 	  VERSION=files ros web.ros upload-hash)
 
 tsv: web.ros
@@ -74,9 +76,7 @@ ffcall: libffcall-$(FFCALL_VERSION).tar.gz
 	rm -rf libffcall-$(FFCALL_VERSION)
 
 clisp: download lasthash
-	git clone --depth 100 $(ORIGIN_URI) || true
-	cd clisp;git checkout `cat ../lasthash`
-	echo mkdir clisp;
+	mkdir clisp;
 	cd clisp; \
 	git init; \
 	git remote add origin $(ORIGIN_URI); \
@@ -102,11 +102,11 @@ compile: show sigsegv ffcall clisp
 		--prefix=$(realpath `pwd`/../$(PACK))
 	cd clisp/src; \
 	make; \
-	make install; \
-	make distrib
+	make install
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
+	make distrib
 
 upload-archive-p:
 	curl -I -f https://github.com/roswell/clisp_head/releases/download/$(VERSION)/$(PACK)-binary.tar.bz2 > /dev/null
