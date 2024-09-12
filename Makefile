@@ -107,7 +107,8 @@ compile: show sigsegv ffcall clisp
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
-	cd clisp/src;make distrib;mv clisp*.gz ../.. || true
+	bash -c "cd clisp/src;make distrib;mv clisp-*.gz ../.."
+	mv clisp-*.gz $(PACK)-distribute.tar.gz
 
 upload-archive-p:
 	curl -I -f https://github.com/roswell/clisp_head/releases/download/$(VERSION)/$(PACK)-binary.tar.bz2 > /dev/null
