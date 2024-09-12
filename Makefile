@@ -76,12 +76,8 @@ ffcall: libffcall-$(FFCALL_VERSION).tar.gz
 	rm -rf libffcall-$(FFCALL_VERSION)
 
 clisp: download lasthash
-	mkdir clisp;
-	cd clisp; \
-	git init; \
-	git remote add origin $(ORIGIN_URI); \
-	git fetch --depth=1 origin $(shell cat lasthash); \
-	git reset --hard FETCH_HEAD
+	git clone --depth 100 $(ORIGIN_URI) || true
+	cd clisp;git checkout `cat ../lasthash`
 
 clisp/version.sh: clisp
 	echo VERSION_NUMBER=$(VERSION) > clisp/version.sh
