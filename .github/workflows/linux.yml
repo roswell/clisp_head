@@ -1,4 +1,4 @@
-name: linux
+name: Linux
 
 on:
   schedule:
@@ -305,3 +305,4 @@ jobs:
         run: |
           ls *.bz2 *.gz
           env FILE=`ls *.bz2` make latest-version upload-archive;
+          env FILE=`ls clisp*.gz` make latest-version upload-archive;
