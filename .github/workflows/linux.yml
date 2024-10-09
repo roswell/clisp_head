@@ -15,41 +15,41 @@ jobs:
         include:
           - comment: "no suffix glibc2.19 amd64"
             target: x86-64
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/amd64'
             docker-image-suffix: ''
           - comment: "no suffix glibc2.19 x86"
             target: x86
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -m32 -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/amd64'
             docker-image-suffix: ''
           - comment: "no suffix glibc2.19 arm64"
             target: arm64
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
           - comment: "no suffix glibc2.31 riscv64"
             target: riscv64
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             image: 'glibc2.31'
             docker-platform: 'linux/riscv64'
             docker-image-suffix: 'riscv64'
           - comment: "no suffix glibc2.19 ppc64le"
             target: ppc64le
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/ppc64le'
             docker-image-suffix: 'ppc64le'
           - comment: "no suffix glibc2.19 armv7"
             target: armhf
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/arm/v7'
@@ -57,45 +57,45 @@ jobs:
            #with suffix below. x86-64
           - suffix: -glibc2.31
             target: x86-64
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'glibc2.31'
             docker-platform: 'linux/amd64'
           - suffix: -glibc2.19
             target: x86-64
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/amd64'
           - suffix: -musl
             target: x86-64
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.2'
             docker-platform: 'linux/amd64'
           - suffix: -static
             target: x86-64
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.2'
             docker-platform: 'linux/amd64'
           # with suffix x86
           - suffix: -glibc2.31
             target: x86
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -m32'
             image: 'glibc2.31'
             docker-platform: 'linux/amd64'
           - suffix: -glibc2.19
             target: x86
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -m32 -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/amd64'
           - suffix: -musl
             target: x86
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -m32'
             image: 'musl1.2.2'
             docker-platform: 'linux/386'
@@ -104,7 +104,7 @@ jobs:
           - suffix: -static
             target: x86
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -m32'
             image: 'musl1.2.2'
             docker-platform: 'linux/386'
@@ -112,7 +112,7 @@ jobs:
             docker-image-suffix: 'x86'
           - suffix: -musl1.1
             target: x86
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.1.24'
             docker-platform: 'linux/386'
@@ -121,21 +121,21 @@ jobs:
           # with suffix arm64
           - suffix: -glibc2.31
             target: arm64
-            lisp: sbcl-bin/2.2.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'glibc2.31'
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
           - suffix: -glibc2.19
             target: arm64
-            lisp: sbcl-bin/2.2.0
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/arm64'
             docker-image-suffix: 'aarch64'
           - suffix: -musl
             target: arm64
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.2'
             docker-platform: 'linux/arm64'
@@ -143,7 +143,7 @@ jobs:
           - suffix: -static
             target: arm64
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.2'
             docker-platform: 'linux/arm64'
@@ -151,13 +151,13 @@ jobs:
           # with suffix riscv64
           - suffix: -glibc2.31
             target: riscv64
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             image: 'glibc2.31'
             docker-platform: 'linux/riscv64'
             docker-image-suffix: 'riscv64'
           - suffix: -musl
             target: riscv64
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/riscv64'
@@ -165,7 +165,7 @@ jobs:
           - suffix: -static
             target: riscv64
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/riscv64'
@@ -173,20 +173,20 @@ jobs:
           #with suffix below. ppc64le
           - suffix: -glibc2.19
             target: ppc64le
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/ppc64le'
             docker-image-suffix: 'ppc64le'
           - suffix: -glibc2.31
             target: ppc64le
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             image: 'glibc2.31'
             docker-platform: 'linux/ppc64le'
             docker-image-suffix: 'ppc64le'
           - suffix: -musl
             target: ppc64le
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/ppc64le'
@@ -194,7 +194,7 @@ jobs:
           - suffix: -static
             target: ppc64le
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/ppc64le'
@@ -202,20 +202,20 @@ jobs:
           #with suffix below. armhf
           - suffix: -glibc2.19
             target: armhf
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             cc: 'cc -std=gnu99'
             image: 'glibc2.19'
             docker-platform: 'linux/arm/v7'
             docker-image-suffix: 'armv7'
           - suffix: -glibc2.31
             target: armhf
-            lisp: 'sbcl-bin/2.0.0'
+            lisp: sbcl-bin/2.4.0
             image: 'glibc2.31'
             docker-platform: 'linux/arm/v7'
             docker-image-suffix: 'armv7'
           - suffix: -musl
             target: armhf
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/arm/v7'
@@ -223,7 +223,7 @@ jobs:
           - suffix: -static
             target: armhf
             clispldflags: '--static -static-libgcc -static-libstdc++ -static'
-            lisp: sbcl-bin/2.0.0
+            lisp: sbcl-bin/2.4.0
             cc: cc
             image: 'musl1.2.5'
             docker-platform: 'linux/arm/v7'
