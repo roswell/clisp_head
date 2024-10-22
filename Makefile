@@ -35,11 +35,16 @@ latest-version: lasthash version
 
 download: lasthash libsigsegv-$(SIGSEGV_VERSION).tar.gz libffcall-$(FFCALL_VERSION).tar.gz
 
-tag: hash web.ros
-	($(MAKE) lasthash  && diff -u hash lasthash) || \
-	( VERSION=$(VERSION) ros web.ros upload-hash; \
-	  VERSION=$(VERSION) ros web.ros upload-hash; \
-	  VERSION=files ros web.ros upload-hash)
+tag: hash lasthash web.ros
+	@echo hash     = $(shell cat hash)
+	@echo lasthash = $(shell cat lasthash)
+	touch $(shell cat hash)
+	diff -u hash lasthash || \
+	( VERSION=$(VERSION) FILE=hash ros web.ros upload-archive; \
+	  VERSION=$(VERSION) FILE=$(shell cat hash) ros web.ros upload-archive; \
+	  VERSION=$(VERSION) FILE=hash ros web.ros upload-archive; \
+	  VERSION=$(VERSION) FILE=$(shell cat hash) ros web.ros upload-archive; \
+	  VERSION=files FILE=hash ros web.ros upload-archive)
 
 tsv: web.ros
 	TSV_FILE=$(TSV_FILE) ros web.ros tsv
