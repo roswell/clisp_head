@@ -266,7 +266,7 @@ jobs:
         if: steps.check_uploaded.outcome == 'failure'
         uses: docker/login-action@v3
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: pull docker image

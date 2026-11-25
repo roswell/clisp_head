@@ -15,7 +15,7 @@ OS ?= $(shell ros roswell-internal-use uname)
 CPU ?= $(shell ros roswell-internal-use uname -m)
 VARIANT ?=
 CLISP_LDFLAGS ?=
-DOCKER_REPO ?= docker.pkg.github.com/roswell/clisp_bin
+DOCKER_REPO ?= ghcr.io/$(GITHUB_REPOSITORY)
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_ACTION ?= docker-default-action
 
