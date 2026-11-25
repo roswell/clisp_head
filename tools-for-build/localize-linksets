@@ -1,0 +1,47 @@
+#!/bin/sh
+# Make every installed CLISP linking set (lib/clisp-*/base, .../full)
+# self-contained: copy any static archive that makevars' LIBS names by an
+# absolute path (e.g. libffcall.a, libsigsegv.a from --with-lib*-prefix) into
+# the linking set, and refer to it by its bare name in LIBS and FILES, like
+# lisp.a and libgnu.a already are.  `make install' leaves these as build-time
+# paths, which do not exist once the binary tarball is unpacked elsewhere.
+# (Upstream's `make distrib' does the same copying for source distributions.)
+#
+# Usage: localize-linksets PREFIX
+set -e
+
+prefix=$1
+test -d "$prefix" || { echo "usage: $0 PREFIX" >&2; exit 1; }
+
+found=no
+for mv in "$prefix"/lib/clisp-*/*/makevars; do
+  test -f "$mv" || continue
+  found=yes
+  dir=`dirname "$mv"`
+  # Read LIBS and FILES in a subshell so this script's variables are untouched.
+  LIBS=`. "$mv"; printf '%s' "$LIBS"`
+  FILES=`. "$mv"; printf '%s' "$FILES"`
+  new_libs=''
+  for f in $LIBS; do
+    case $f in
+      /*.a)
+        b=`basename "$f"`
+        if test ! -f "$dir/$b"; then
+          test -f "$f" || { echo "$0: $mv: $f not found" >&2; exit 1; }
+          echo "$0: copying $f into $dir"
+          cp "$f" "$dir/$b"
+        fi
+        case " $FILES " in *" $b "*) ;; *) FILES="$FILES $b" ;; esac
+        f=$b ;;
+    esac
+    new_libs="$new_libs $f"
+  done
+  new_libs=${new_libs# }
+  { grep -v -e '^LIBS=' -e '^FILES=' "$mv"
+    printf "LIBS='%s'\n" "$new_libs"
+    printf "FILES='%s'\n" "$FILES"
+  } > "$mv.new"
+  mv "$mv.new" "$mv"
+done
+
+test $found = yes || { echo "$0: no makevars under $prefix/lib" >&2; exit 1; }

@@ -109,6 +109,7 @@ compile: show sigsegv ffcall clisp
 	cd clisp/src; \
 	make; \
 	make install
+	sh ./tools-for-build/localize-linksets $(PACK)
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
