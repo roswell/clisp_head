@@ -110,6 +110,7 @@ compile: show sigsegv ffcall clisp
 		--with-libffcall-prefix=`pwd`/../ffcall \
 		--prefix=`pwd`/../$(PACK)
 	cd clisp/src; \
+	ulimit -s 8192 2>/dev/null || true; \
 	make; \
 	make install
 	sh ./tools-for-build/localize-linksets $(PACK)
