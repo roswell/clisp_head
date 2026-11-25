@@ -54,5 +54,6 @@ jobs:
           VERSION: ${{ secrets.VERSION }}
           CPU: ${{ matrix.target }}
           VARIANT: ${{ matrix.suffix }}
+          DYLD_LIBRARY_PATH: /opt/homebrew/opt/openssl@3/lib
         run: |
           env FILE=`ls *.bz2` make latest-version upload-archive;
