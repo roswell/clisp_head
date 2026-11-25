@@ -15,6 +15,7 @@ OS ?= $(shell ros roswell-internal-use uname)
 CPU ?= $(shell ros roswell-internal-use uname -m)
 VARIANT ?=
 CLISP_LDFLAGS ?=
+CLISP_LD ?= $(if $(and $(findstring -m32,$(CC)),$(filter linux,$(OS))),ld -m elf_i386)
 DOCKER_REPO ?= ghcr.io/$(GITHUB_REPOSITORY)
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_ACTION ?= docker-default-action
@@ -101,6 +102,7 @@ compile: show sigsegv ffcall clisp
 	cd clisp; \
 	CC='$(CC)' \
 	LDFLAGS='$(CLISP_LDFLAGS)' \
+	$(if $(CLISP_LD),LD='$(CLISP_LD)') \
 	FORCE_UNSAFE_CONFIGURE=1 \
 	./configure \
 		--with-libsigsegv-prefix=`pwd`/../sigsegv \
@@ -113,8 +115,8 @@ compile: show sigsegv ffcall clisp
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
-	bash -c "cd clisp/src;make distrib;mv clisp-*.gz ../.."
-	mv clisp-*.gz $(PACK)-distribute.tar.gz
+	-bash -c "cd clisp/src && make distrib && mv clisp-*.gz ../.."
+	-mv clisp-*.gz $(PACK)-distribute.tar.gz
 
 upload-archive-p:
 	curl -I -f https://github.com/roswell/clisp_head/releases/download/$(VERSION)/$(PACK)-binary.tar.bz2 > /dev/null
