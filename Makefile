@@ -21,7 +21,7 @@ DOCKER_PLATFORM ?= linux/amd64
 DOCKER_ACTION ?= docker-default-action
 
 PACK=clisp-$(VERSION)-$(CPU)-$(OS)$(VARIANT)
-LAST_VERSION=$(shell ros web.ros version)
+LAST_VERSION=$(shell curl -sfL -o /dev/null -w '%{url_effective}' $(GITHUB)/releases/latest | sed -n 's|.*/releases/tag/||p')
 
 hash:
 	git ls-remote --heads $(ORIGIN_URI) $(ORIGIN_REF) |sed -E "s/^([0-9a-fA-F]*).*/\1/" > hash
@@ -56,7 +56,8 @@ upload-tsv: web.ros
 download-tsv:
 	TSV_FILE=$(TSV_FILE) VERSION=$(VERSION) ros web.ros get-tsv
 
-version: web.ros
+version:
+	@test -n "$(LAST_VERSION)" || { echo "could not determine the latest release of $(GITHUB)" >&2; exit 1; }
 	@echo $(LAST_VERSION) > version
 
 web.ros:
