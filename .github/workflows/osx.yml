@@ -38,7 +38,7 @@ jobs:
           OS: darwin
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARCH: ${{ matrix.target }}
-          CFLAGS: -mmacosx-version-min=10.9
+          CFLAGS: -g -O2 -mmacosx-version-min=10.9
           CXXFLAGS: -mmacosx-version-min=10.9
           LDFLAGS: -mmacosx-version-min=10.9
         run: |
