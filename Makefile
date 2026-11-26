@@ -117,7 +117,7 @@ compile: show sigsegv ffcall clisp
 
 archive: show
 	tar cjvf $(PACK)-binary.tar.bz2 $(PACK)
-	-bash -c "cd clisp/src && make distrib && mv clisp-*.gz ../.."
+	-bash -c "ulimit -s 8192 2>/dev/null; cd clisp/src && make distrib && mv clisp-*.gz ../.."
 	-mv clisp-*.gz $(PACK)-distribute.tar.gz
 
 upload-archive-p:

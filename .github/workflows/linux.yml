@@ -306,4 +306,4 @@ jobs:
         run: |
           ls *.bz2 *.gz
           env FILE=`ls *.bz2` make latest-version upload-archive;
-          env FILE=`ls clisp*.gz` make latest-version upload-archive;
+          if ls clisp*.gz >/dev/null 2>&1; then env FILE=`ls clisp*.gz` make latest-version upload-archive; fi
