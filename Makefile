@@ -156,8 +156,8 @@ docker:
 		-e CC='$(CC)' \
 		-e CLISP_LDFLAGS='$(CLISP_LDFLAGS)' \
 		-e VARIANT=$(VARIANT) \
-		-e CFLAGS=$(CFLAGS) \
-		-e LINKFLAGS=$(LINKFLAGS) \
+		$(if $(CFLAGS),-e CFLAGS='$(CFLAGS)') \
+		$(if $(LINKFLAGS),-e LINKFLAGS='$(LINKFLAGS)') \
 		$(DOCKER_REPO)/$$(cat ./tools-for-build/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
 		bash \
 		-c "cd /tmp;bash ./tools-for-build/$(IMAGE)/setup;make $(DOCKER_ACTION)"
